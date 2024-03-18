@@ -1,0 +1,56 @@
+
+# Import google_streetview for the api and helper module
+
+import requests
+import os
+
+import google_streetview.api
+
+# API key 
+
+api_key = "api_key"
+
+
+# Replace with your desired latitude-longitude coordinates
+locations = [
+    "29.775182,-95.310250",  # Houston, TX
+    "29.733578,-95.439375",  # Katy, TX
+    "29.879429,-95.615629",  # Spring, TX
+    "29.950484,-95.342757",  # The Woodlands, TX
+]
+
+# Set  parameters
+
+size = "640x480" #size of the image 
+heading = "0" #he horizontal angle or direction the camera is facing. It represents the rotation of the camera around its vertical axis.
+pitch = "0" # vertical angle or tilt of the camera. It represents how much the camera is pointed above or below the horizon.
+
+# Create 'images' directory if it doesn't exist in the specified path
+
+save_path = r"C:\Users\jaisa\Desktop\Spring 2024\REP\images"
+
+os.makedirs(save_path, exist_ok=True)
+
+for loc in locations:
+    
+    # Construct the URL for Street View image
+    url = f"https://maps.googleapis.com/maps/api/streetview?size={size}&location={loc}&heading={heading}&pitch={pitch}&key={api_key}"
+
+    # Send a GET request to the API
+    response = requests.get(url)
+
+    # Check if the request was successful (status code 200)
+    if response.status_code == 200:
+        
+        # Save the image to the specified path
+        
+        with open(os.path.join(save_path, f"streetview_{loc.replace(',', '_')}.jpg"), 'wb') as file:
+            file.write(response.content)
+            
+        print(f"Image saved for location: {loc}")
+        
+    else:
+        print(f"Failed to retrieve image for location: {loc}")
+        print(f"Status Code: {response.status_code}")
+        print(f"Response Content: {response.text}")
+        
